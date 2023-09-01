@@ -1,0 +1,31 @@
+version: "3.3"
+
+services:  
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # networks:
+    #   # as the docker-compose-base.yml is called from .devcontainer docker appends devcontainer_ to the dataservice network name
+    #   - dev_dataservice
+    ports:
+     # expose port to be available via ednpasxxxx
+     # note: localhost:8080 is forwarded within devcontainer.json for convenience
+     - "8020:8080"
+    # volume for workspace defined in devcontainer.json
+    volumes:
+      # Use a named volume for the source code
+      - ..:/workspace
+      # Persist VS Code extensions between rebuilds
+      - vscode-extensions:/root/.vscode-server/extensions
+    command: sleep infinity
+
+volumes:
+  vscode-extensions:
+
+
+# Create a new network for the purpose of assigning a static IP for a service
+# This docker network will be destroyed when docker-compose down is called.
+# networks:
+#   dev_dataservice:
+#     external: true

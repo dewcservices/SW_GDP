@@ -1,0 +1,70 @@
+// For format details, see https://aka.ms/vscode-remote/devcontainer.json or this file's README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.122.1/containers/java-11
+{
+	"name": "Java 11",
+	"dockerComposeFile": "docker-compose-dev.yml",
+	"workspaceFolder": "/workspace",
+	"service": "app",
+	// Uncomment the next line if you want start specific services in your Docker Compose config.
+	// "runServices": ["zookeeper-server", "kafka-server", "akhq", "app", "postgresql"],
+	// Uncomment the next line if you want to keep your containers running after VS Code shuts down.
+	// "shutdownAction": "none",
+	// Configure tool-specific properties.
+	"customizations": {
+		// Configure properties specific to VS Code.
+		"vscode": {
+			// Set *default* container specific settings.json values on container create.
+			"settings": { 
+				"#terminal.integrated.defaultProfile.linux#": "/bin/bash",
+				"java.home": "/docker-java-home",
+				// GRADLE_HOME - install path to gradle 
+				// - this is the path to the local gradle installation, otherwise it will try to reach out to the internet 
+				// - downloaded from artifactory and override the current install as the base container only seemed to provide the bin
+				"java.import.gradle.home": "/opt/gradle",
+				// jdk used by gradle, set to JAVA_HOME
+				"java.import.gradle.java.home": "/docker-java-home",
+				"editor.tabSize": 2,
+				"java.format.comments.enabled": false,
+				// VSCode messes up license headers
+				"editor.formatOnSave": false,
+				// Align with eclipse and Google style
+				"java.completion.importOrder": [
+					"com",
+					"java",
+					"javax",
+					"org"
+				],
+				"workbench.iconTheme": "material-icon-theme",
+				"workbench.colorTheme": "Dracula Soft",
+				"peacock.remoteColor": "#42b883"
+			},
+			
+			// Add the IDs of extensions you want installed when the container is created.
+			"extensions": [
+				"vscjava.vscode-java-pack",
+				"pivotal.vscode-boot-dev-pack",
+				"DavidAnson.vscode-markdownlint",
+				"GabrielBB.vscode-lombok",
+				"dracula-theme.theme-dracula",
+				"PKief.material-icon-theme",
+				"Gruntfuggly.todo-tree",
+				"eamodio.gitlens",
+				"mhutchie.git-graph",
+				"johnpapa.vscode-peacock",
+				"streetsidesoftware.code-spell-checker"
+			]
+		}
+	},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	"forwardPorts": [
+		8080
+	]
+	// here I am bring up the core supporting containers independent of the app container.
+	// "initializeCommand": "docker-compose -f .devcontainer/docker-compose-base.yml --project-name dev up -d",
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// "postCreateCommand": "java -version",
+
+	// Uncomment to connect as a non-root user. See https://aka.ms/vscode-remote/containers/non-root.
+	// "remoteUser": "vscode"
+}
