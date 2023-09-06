@@ -5,9 +5,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    # networks:
+    networks:
     #   # as the docker-compose-base.yml is called from .devcontainer docker appends devcontainer_ to the dataservice network name
-    #   - dev_dataservice
+      - dev
     ports:
      # expose port to be available via ednpasxxxx
      # note: localhost:8080 is forwarded within devcontainer.json for convenience
@@ -20,12 +20,27 @@ services:
       - vscode-extensions:/root/.vscode-server/extensions
     command: sleep infinity
 
+  db:
+    container_name: postgresdb
+    image: postgres:latest
+    restart: unless-stopped
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      # NOTE: POSTGRES_DB/USER/PASSWORD should match values in app container
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    networks:
+      - dev
+
 volumes:
   vscode-extensions:
+  postgres-data:
 
 
 # Create a new network for the purpose of assigning a static IP for a service
 # This docker network will be destroyed when docker-compose down is called.
-# networks:
-#   dev_dataservice:
-#     external: true
+networks:
+  dev:
+    driver: bridge

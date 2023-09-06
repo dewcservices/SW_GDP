@@ -7,9 +7,11 @@ import java.util.List;
 public interface IItemService {
   List<ItemDto> getItems();
 
-  ItemDto getItemById(int id);
+  ItemDto getItemById(long id);
 
   ItemDto createItem(ItemDto dto);
 
-  ItemDto updateItem(ItemDto dto);
+  ItemDto updateItem(long id, ItemDto dto);
+
+  void deleteItem(long id);
 }

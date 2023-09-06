@@ -1,23 +1,22 @@
 
 # Producer properties
 
-app:
-  kafka:
-    producer:
-      topic: producer
-    consumer:
-      topic: consumer
-
 spring:
-  kafka:
-    bootstrap-servers: kafka:9092
-    producer:    
-      retries: 0
-      acks: all
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
-    consumer:
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+  datasource:
+    url: jdbc:postgresql://db:5432/postgres
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        temp:
+          use_jdbc_metadata_defaults: false
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+
+springdoc:
+  swagger-ui.path: /swagger-ui.html
 
