@@ -8,7 +8,7 @@ class IItemService:
     def get_item(self, item_id: int) -> ItemDTO:
         raise NotImplementedError
 
-    def get_items(self, skip: int = 0, limit: int = 10) -> List[ItemDTO]:
+    def get_items(self) -> List[ItemDTO]:
         raise NotImplementedError
 
     def update_item(self, item_id: int, item_update_dto: ItemUpdateDTO) -> ItemDTO:

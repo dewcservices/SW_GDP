@@ -1,8 +1,8 @@
 from typing import List, Optional
 from sqlalchemy.orm import Session
+from fastapi import HTTPException
 from ..models.item import Item
 from .iitem_repository import IItemRepository
-from ..database import get_db
 
 class ItemRepository(IItemRepository):
     def __init__(self, db: Session):
@@ -13,24 +13,32 @@ class ItemRepository(IItemRepository):
         self.db.commit()
         self.db.refresh(item)
         return item
-    
-    def get(self, item_id: int) -> Optional[Item]:
+
+    def find(self, item_id: int) -> Optional[Item]:
         return self.db.query(Item).filter(Item.id == item_id).first()
     
-    def get_all(self, skip: int = 0, limit: int = 10) -> List[Item]:
-        return self.db.query(Item).offset(skip).limit(limit).all()
+    def get(self, item_id: int) -> Item:
+        item_db = self.find(item_id)
+        if item_db:
+            return item_db    
+        raise HTTPException(status_code=404, detail="Item not found")
+
     
-    def update(self, item_id: int, item: Item) -> Item:
-        db_item = self.db.query(Item).filter(Item.id == item_id).first()
-        if db_item:
-            for key, value in item.dict().items():
-                setattr(db_item, key, value)
-            self.db.commit()
-            self.db.refresh(db_item)
+    def get_all(self) -> List[Item]:
+        return self.db.query(Item).all()
+    
+    def update(self, item_id: int, updated_data: dict) -> Item:
+        db_item = self.get(item_id)
+
+        # Update the SQLAlchemy model instance with data from the Pydantic model
+        for key, value in updated_data.items():
+            setattr(db_item, key, value)
+        self.db.commit()
+        self.db.refresh(db_item)
         return db_item
     
     def delete(self, item_id: int):
-        db_item = self.db.query(Item).filter(Item.id == item_id).first()
+        db_item = self.get(item_id)
         if db_item:
             self.db.delete(db_item)
             self.db.commit()

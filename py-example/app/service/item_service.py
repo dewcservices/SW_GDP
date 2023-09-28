@@ -13,27 +13,20 @@ class ItemService(IItemService):
     def create_item(self, item_create_dto: ItemCreateDTO) -> ItemDTO:
         db_item = ItemDB(**item_create_dto.dict())
         created_item = self.repository.create(db_item)
-        return ItemDTO(**created_item.dict())
+        return ItemDTO.from_orm(created_item)
     
     def get_item(self, item_id: int) -> ItemDTO:
         db_item = self.repository.get(item_id)
-        if db_item is None:
-            raise HTTPException(status_code=404, detail="Item not found")
-        return ItemDTO(**db_item.dict())
+        return ItemDTO.from_orm(db_item)
     
-    def get_items(self, skip: int = 0, limit: int = 10) -> List[ItemDTO]:
-        db_items = self.repository.get_all(skip, limit)
-        return [ItemDTO(**db_item.dict()) for db_item in db_items]
+    def get_items(self) -> List[ItemDTO]:
+        db_items = self.repository.get_all()
+        return [ItemDTO.from_orm(db_item) for db_item in db_items]
 
     def update_item(self, item_id: int, item_update_dto: ItemUpdateDTO) -> ItemDTO:
-        db_item = self.repository.get(item_id)
-        if db_item is None:
-            raise HTTPException(status_code=404, detail="Item not found")
-        updated_item = self.repository.update(item_id, ItemDB(**item_update_dto.dict()))
-        return ItemDTO(**updated_item.dict())
+        updated_data = item_update_dto.dict(exclude_unset=True)
+        updated_item = self.repository.update(item_id, updated_data)
+        return ItemDTO.from_orm(updated_item)
     
     def delete_item(self, item_id: int):
-        db_item = self.repository.get(item_id)
-        if db_item is None:
-            raise HTTPException(status_code=404, detail="Item not found")
         self.repository.delete(item_id)
